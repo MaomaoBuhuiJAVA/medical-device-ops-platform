@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose"
-import { prisma } from "./prisma"
-import { parseCookies } from "./http"
+import { prisma } from "./prisma.js"
+import { parseCookies } from "./http.js"
 
 const COOKIE_NAME = "session"
 
@@ -162,4 +162,3 @@ export async function ensureBaseRbacData() {
 
   return { roleAdmin, roleEngineer, roleManager }
 }
-

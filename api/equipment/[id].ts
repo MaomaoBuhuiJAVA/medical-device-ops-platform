@@ -1,6 +1,6 @@
-import { json } from "../_lib/http"
-import { prisma } from "../_lib/prisma"
-import { requirePermission } from "../_lib/auth"
+import { json } from "../_lib/http.js"
+import { prisma } from "../_lib/prisma.js"
+import { requirePermission } from "../_lib/auth.js"
 
 export const config = { runtime: "nodejs" }
 
@@ -62,4 +62,3 @@ export default async function handler(req: Request) {
     return json(500, { error: message })
   }
 }
-

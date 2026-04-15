@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
-import { prisma } from "../_lib/prisma"
-import { json } from "../_lib/http"
-import { ensureBaseRbacData, sessionCookie, signSession } from "../_lib/auth"
+import { prisma } from "../_lib/prisma.js"
+import { json } from "../_lib/http.js"
+import { ensureBaseRbacData, sessionCookie, signSession } from "../_lib/auth.js"
 
 export const config = { runtime: "nodejs" }
 
@@ -51,4 +51,3 @@ export default async function handler(req: Request) {
     return json(500, { error: message })
   }
 }
-

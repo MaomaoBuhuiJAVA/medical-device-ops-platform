@@ -1,5 +1,5 @@
-import { clearSessionCookie } from "../_lib/auth"
-import { json } from "../_lib/http"
+import { clearSessionCookie } from "../_lib/auth.js"
+import { json } from "../_lib/http.js"
 
 export const config = { runtime: "nodejs" }
 
@@ -14,4 +14,3 @@ export default async function handler(req: Request) {
     return json(500, { error: message })
   }
 }
-

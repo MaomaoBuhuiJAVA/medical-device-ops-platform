@@ -1,5 +1,5 @@
-import { json } from "../_lib/http"
-import { getUserFromRequest, getUserPermissions } from "../_lib/auth"
+import { json } from "../_lib/http.js"
+import { getUserFromRequest, getUserPermissions } from "../_lib/auth.js"
 
 export const config = { runtime: "nodejs" }
 
@@ -15,4 +15,3 @@ export default async function handler(req: Request) {
     return json(500, { error: message })
   }
 }
-
