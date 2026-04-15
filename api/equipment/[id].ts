@@ -20,42 +20,46 @@ function mapRiskToDb(risk: string) {
 }
 
 export default async function handler(req: Request) {
-  const url = new URL(req.url)
-  const parts = url.pathname.split("/")
-  const id = parts[parts.length - 1]
-  if (!id) return json(400, { error: "Missing id" })
+  try {
+    const url = new URL(req.url)
+    const parts = url.pathname.split("/")
+    const id = parts[parts.length - 1]
+    if (!id) return json(400, { error: "Missing id" })
 
-  if (req.method === "PUT") {
-    await requirePermission(req, "equipment:update")
-    const body = (await req.json().catch(() => ({}))) as {
-      code?: string
-      name?: string
-      brand?: string
-      model?: string
-      department?: string
-      risk?: string
-      status?: string
+    if (req.method === "PUT") {
+      await requirePermission(req, "equipment:update")
+      const body = (await req.json().catch(() => ({}))) as {
+        code?: string
+        name?: string
+        brand?: string
+        model?: string
+        department?: string
+        risk?: string
+        status?: string
+      }
+      await prisma.equipment.update({
+        where: { id },
+        data: {
+          code: body.code,
+          name: body.name,
+          brand: body.brand ?? null,
+          model: body.model ?? null,
+          department: body.department,
+          risk: body.risk ? (mapRiskToDb(body.risk) as any) : undefined,
+          status: body.status ? (mapStatusToDb(body.status) as any) : undefined,
+        },
+      })
+      return json(200, { ok: true })
     }
-    await prisma.equipment.update({
-      where: { id },
-      data: {
-        code: body.code,
-        name: body.name,
-        brand: body.brand ?? null,
-        model: body.model ?? null,
-        department: body.department,
-        risk: body.risk ? (mapRiskToDb(body.risk) as any) : undefined,
-        status: body.status ? (mapStatusToDb(body.status) as any) : undefined,
-      },
-    })
-    return json(200, { ok: true })
-  }
 
-  if (req.method === "POST") {
-    // custom actions: /api/equipment/:id/scrap could be implemented later
-    return json(400, { error: "Unsupported action" })
-  }
+    if (req.method === "POST") {
+      return json(400, { error: "Unsupported action" })
+    }
 
-  return json(405, { error: "Method Not Allowed" })
+    return json(405, { error: "Method Not Allowed" })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "设备更新失败"
+    return json(500, { error: message })
+  }
 }
 
