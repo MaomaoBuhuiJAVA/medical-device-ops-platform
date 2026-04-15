@@ -1,0 +1,6 @@
+{
+  "name": "医疗设备运行维护巡检系统",
+  "description": "实现医疗设备从入库、巡检、维修到报废的全生命周期管理，取代传统的纸质记录。",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
