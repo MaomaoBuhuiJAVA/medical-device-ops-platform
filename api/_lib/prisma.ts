@@ -1,30 +1,17 @@
-import { kv } from '@vercel/kv';
-
+// api/_lib/prisma.ts
+// 彻底移除所有 import 和数据库调用
 export const prisma = {
   equipment: {
-    findMany: async () => {
-      let list = await kv.get<any[]>('equipment_list');
-      if (!list) {
-        list = [
-          { id: '1', code: 'EQ-2026-001', name: '多参数监护仪', brand: '迈瑞', model: 'N17', department: 'ICU', status: 'IN_USE', risk: 'HIGH', createdAt: new Date(), updatedAt: new Date() },
-          { id: '2', code: 'EQ-2026-002', name: '除颤仪', brand: '飞利浦', model: 'Dfm100', department: '急诊科', status: 'IN_USE', risk: 'HIGH', createdAt: new Date(), updatedAt: new Date() }
-        ];
-        await kv.set('equipment_list', list);
-      }
-      return list;
-    },
-    create: async ({ data }: any) => {
-      const list = (await kv.get<any[]>('equipment_list')) || [];
-      const newEquip = { ...data, id: Date.now().toString(), createdAt: new Date(), updatedAt: new Date() };
-      list.push(newEquip);
-      await kv.set('equipment_list', list);
-      return newEquip;
-    },
-    update: async ({ where, data }: any) => {
-      let list = (await kv.get<any[]>('equipment_list')) || [];
-      list = list.map(e => e.id === where.id ? { ...e, ...data, updatedAt: new Date() } : e);
-      await kv.set('equipment_list', list);
-      return { ok: true };
-    }
+    findMany: async () => [
+      { id: '1', code: 'EQ-2026-001', name: '多参数监护仪', brand: '迈瑞', model: 'N17', department: 'ICU', status: 'IN_USE', risk: 'HIGH', createdAt: new Date(), updatedAt: new Date() },
+      { id: '2', code: 'EQ-2026-002', name: '除颤仪', brand: '飞利浦', model: 'Dfm100', department: '急诊科', status: 'IN_USE', risk: 'HIGH', createdAt: new Date(), updatedAt: new Date() },
+      { id: '3', code: 'EQ-2026-003', name: '呼吸机', brand: '德尔格', model: 'Savina', department: '呼吸科', status: 'IN_REPAIR', risk: 'MEDIUM', createdAt: new Date(), updatedAt: new Date() }
+    ],
+    create: async () => ({ id: Date.now().toString() }),
+    update: async () => ({ ok: true }),
+    delete: async () => ({ ok: true }),
+  },
+  user: {
+    findUnique: async () => ({ id: 'mock-admin-id', username: 'admin', department: '信息科' }),
   }
 } as any;
