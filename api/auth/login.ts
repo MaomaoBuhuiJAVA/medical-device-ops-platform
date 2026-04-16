@@ -1,18 +1,15 @@
-// api/auth/login.ts
-import { json } from "../_lib/http.js"
 import { sessionCookie, signSession } from "../_lib/auth.js"
 
-export const config = { runtime: "nodejs" }
+export default async function handler(req: any, res: any) {
+  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" })
 
-export default async function handler(req: Request) {
-  if (req.method !== "POST") return json(405, { error: "Method Not Allowed" })
-  const { username, password } = await req.json().catch(() => ({}))
+  // 致命错误修复：Vercel Node 自动解析了请求，直接从 req.body 拿！
+  const { username, password } = req.body || {}
   
   if (username === 'admin' && password === '123456') {
     const token = await signSession('mock-admin-id')
-    const res = json(200, { user: { id: 'mock-admin-id', username: 'admin', department: '信息科' } })
-    res.headers.set("set-cookie", sessionCookie(token))
-    return res
+    res.setHeader("Set-Cookie", sessionCookie(token))
+    return res.status(200).json({ user: { id: 'mock-admin-id', username: 'admin', department: '信息科' } })
   }
-  return json(401, { error: "用户名或密码错误" })
+  return res.status(401).json({ error: "用户名或密码错误" })
 }
