@@ -1,5 +1,3 @@
-import bcrypt from "bcryptjs"
-import { prisma } from "../_lib/prisma.js"
 import { json } from "../_lib/http.js"
 import { sessionCookie, signSession } from "../_lib/auth.js"
 
@@ -16,17 +14,13 @@ export default async function handler(req: Request) {
 
     if (!username || !password) return json(400, { error: "缺少用户名或密码" })
 
-    const user = await prisma.user.findUnique({
-      where: { username },
-      select: { id: true, username: true, department: true, passwordHash: true },
-    })
-    if (!user) return json(401, { error: "用户名或密码错误" })
+    // 极速模式：只要账号密码是这个，立刻放行
+    if (username !== 'admin' || password !== '123456') {
+      return json(401, { error: "用户名或密码错误" })
+    }
 
-    const ok = await bcrypt.compare(password, user.passwordHash)
-    if (!ok) return json(401, { error: "用户名或密码错误" })
-
-    const token = await signSession(user.id)
-    const res = json(200, { user: { id: user.id, username: user.username, department: user.department } })
+    const token = await signSession('mock-admin-id')
+    const res = json(200, { user: { id: 'mock-admin-id', username: 'admin', department: '信息科' } })
     res.headers.set("set-cookie", sessionCookie(token))
     return res
   } catch (error) {
