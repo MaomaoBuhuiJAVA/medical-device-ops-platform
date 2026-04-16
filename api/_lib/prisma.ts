@@ -5,7 +5,7 @@ import { kv } from '@vercel/kv';
 export const prisma = {
   user: {
     findUnique: async ({ where }: any) => {
-      // 检查 KV 中是否有用户，没有则返回默认管理员
+      // 模拟一个默认管理员账号：admin / 123456
       const user = await kv.get(`user:${where.username || where.id}`);
       if (user) return user;
       
@@ -14,7 +14,7 @@ export const prisma = {
           id: 'mock-admin-id',
           username: 'admin',
           department: '信息科',
-          passwordHash: '$2a$10$kh.8Xn.L854.YvEOnE7mte.YV1UvF.UvF.UvF.UvF.UvF.UvF.UvF.' // 密码 123456
+          passwordHash: '$2a$10$kh.8Xn.L854.YvEOnE7mte.YV1UvF.UvF.UvF.UvF.UvF.UvF.UvF.' 
         };
       }
       return null;
@@ -23,7 +23,6 @@ export const prisma = {
   },
   equipment: {
     findMany: async () => {
-      // 从 KV 获取设备列表，如果没有则初始化默认数据
       let list = await kv.get<any[]>('equipment_list');
       if (!list) {
         list = [
